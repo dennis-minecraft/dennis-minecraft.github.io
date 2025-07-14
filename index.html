@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <title>SYSTEEMFOUT</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #0000AA;
+      color: white;
+      font-family: monospace;
+      text-align: center;
+      padding-top: 100px;
+      height: 100vh;
+      overflow: hidden;
+    }
+    h1 {
+      font-size: 64px;
+    }
+    p {
+      font-size: 28px;
+    }
+    #countdown {
+      font-size: 72px;
+      margin-top: 20px;
+      display: none;
+    }
+    #final-message {
+      display: none;
+      font-size: 36px;
+      color: #00FF00;
+      margin-top: 40px;
+    }
+    #start-button {
+      font-size: 32px;
+      padding: 20px 40px;
+      background-color: #f90;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 40px;
+    }
+    #start-button:hover {
+      background-color: #fb0;
+    }
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>⚠️ SYSTEEMFOUT</h1>
+  <p>Druk op ‘Systeemscan starten’ om het probleem te verifiëren</p>
+  <button id="start-button">Systeemscan starten</button>
+  <p id="countdown">10</p>
+  <p>📛 GEVAAR: Onherstelbare schade gedetecteerd!</p>
+  <div id="final-message">
+    😄 Grapje!<br><br>
+    🎉 Gefeliciteerd met je verjaardag!<br>
+    Je bent gehackt… door geluk. 🥳
+  </div>
+
+  <audio id="error-sound" preload="auto">
+    <source src="error_beep.wav" type="audio/wav" />
+  </audio>
+  <audio id="countdown-beep" preload="auto">
+    <source src="countdown_beep.wav" type="audio/wav" />
+  </audio>
+
+  <script>
+    const startBtn = document.getElementById("start-button");
+    const countdownEl = document.getElementById("countdown");
+    const finalMsg = document.getElementById("final-message");
+    const errorSound = document.getElementById("error-sound");
+    const countdownBeep = document.getElementById("countdown-beep");
+    let countdownInterval;
+
+    startBtn.addEventListener("click", () => {
+      startBtn.style.display = "none";
+
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().then(() => {
+          playAlarmThenCountdown();
+        }).catch(() => {
+          playAlarmThenCountdown();
+        });
+      } else {
+        playAlarmThenCountdown();
+      }
+    });
+
+    function playAlarmThenCountdown() {
+      countdownEl.style.display = "block";
+
+      errorSound.play().then(() => {
+        startCountdownWithBeeps(10);
+      }).catch(() => {
+        // if sound play fails, just start countdown
+        startCountdownWithBeeps(10);
+      });
+    }
+
+    function startCountdownWithBeeps(seconds) {
+      countdownEl.textContent = seconds;
+
+      countdownInterval = setInterval(() => {
+        seconds--;
+        countdownEl.textContent = seconds;
+
+        if (seconds > 0) {
+          countdownBeep.play().catch(() => {});
+        } else {
+          clearInterval(countdownInterval);
+          countdownEl.style.display = "none";
+          finalMsg.style.display = "block";
+        }
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
